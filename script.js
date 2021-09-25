@@ -14,39 +14,43 @@ const Modal = {
     }
 }
 
-const transaction = [
-    {
-        id: 1,
-        description: "Luz",
-        amount: -50000,
-        date: "10/09/2021",
-    },        
-    {
-        id: 2,
-        description: "Job Freelance",
-        amount: 500000,
-        date: "15/09/2021",
-    },        
-    {
-        id: 3,
-        description: "Internet",
-        amount: -10000,
-        date: "16/09/2021",
-    },        
-]
+
 
 
 const Transaction = { /*Funcionalidade do meu app pelo qual eu trato as transações
     * recebendo os valores positivos e negativos na minha table
     * somando a valores positivos para exibir em entradas
     */
-    all: transaction,
+    all: [
+        {
+            description: "Luz",
+            amount: -50000,
+            date: "10/09/2021",
+        },        
+        {
+            description: "Job Freelance",
+            amount: 500000,
+            date: "15/09/2021",
+        },        
+        {
+            description: "Internet",
+            amount: -10000,
+            date: "16/09/2021",
+        },        
+    ],
 
     add(transactions){
         Transaction.all.push(transactions)
 
-        console.log(Transaction.all)
+        App.reload()
     },
+    
+    remove(index) {
+        Transaction.all.splice(index, 1)
+
+        App.reload()
+    },
+
     incomes() {
         let income = 0;
             //pegar todas as transações
@@ -95,6 +99,7 @@ const DOM = { //Essa função DOM, executa ações na tela do APP, está diretam
         
         DOM.transctionsContainer.appendChild(tr)
     },
+
     innerHTMLTransaction(transaction) {
         const CSSclass = transaction.amount > 0 ? 'income' : 'expense'
 
@@ -117,6 +122,9 @@ const DOM = { //Essa função DOM, executa ações na tela do APP, está diretam
         .innerHTML = Utils.formatCurrency(Transaction.expenses());
         document.getElementById("totalDisplay")
         .innerHTML = Utils.formatCurrency(Transaction.total())
+    },
+    clearTransactions() { //limpa a tbody(o corpo da tabela))
+        DOM.transctionsContainer.innerHTML = ""
     }
 }
 
@@ -143,18 +151,25 @@ const Utils = {
     }
 }
 
-Transaction.add( {
-    id: 30,
-    description: "novoObjeto",
-    amount: 00,
-    date: "23/10/2021"
+const App = {
+    init() {
+        
+        Transaction.all.forEach(function(transaction){
+            DOM.addTransaction(transaction)
+        })
+        
+        DOM.updateBalance()
 
+        
+    },
+
+    reload() {
+        DOM.clearTransactions()
+        App.init()
+    },
 }
 
-)
 
-transaction.forEach(function(transaction){
-    DOM.addTransaction(transaction)
-})
 
-DOM.updateBalance()
+
+App.init()
